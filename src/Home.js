@@ -4,6 +4,7 @@ import { Container, Row, Col, Nav, NavItem } from "reactstrap";
 import Accounts from "./components/Accounts";
 import Proxies from "./components/Proxies";
 import Dashboard from "./components/Dashboard";
+import ChartDashboard from "./components/ChartDashboard";
 
 const Home = () => {
   return (
@@ -59,6 +60,7 @@ const Home = () => {
             <Routes>
               <Route path="/accounts" element={<Accounts />} />
               <Route path="/proxies" element={<Proxies />} />
+              <Route path="/dashboard" element={<ChartDashboard />} />
               <Route path="/" element={<Dashboard />} />
             </Routes>
           </Col>
