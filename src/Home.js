@@ -5,6 +5,7 @@ import Accounts from "./components/Accounts";
 import Proxies from "./components/Proxies";
 import Dashboard from "./components/Dashboard";
 import ChartDashboard from "./components/ChartDashboard";
+import Scraper from "./components/Scraper";
 
 const Home = () => {
   return (
@@ -12,7 +13,10 @@ const Home = () => {
       <Container fluid>
         <Row>
           <Col md={2} className="bg-light sidebar">
-            <Nav vertical className="shadow border rounded-3 p-3 m-3 h-95vh gap-1">
+            <Nav
+              vertical
+              className="shadow border rounded-3 p-3 m-3 h-95vh gap-1"
+            >
               <NavItem>
                 <NavLink
                   className="nav-link my-3"
@@ -54,6 +58,16 @@ const Home = () => {
                   Proxies
                 </NavLink>
               </NavItem>
+              <NavItem>
+                <NavLink
+                  className="nav-link d-flex align-items-center gap-2"
+                  activeClassName="active"
+                  to="/scraper"
+                >
+                  <span className="material-symbols-outlined">cycle</span>
+                  Scraper
+                </NavLink>
+              </NavItem>
             </Nav>
           </Col>
           <Col md={10} className="mt-4">
@@ -61,6 +75,7 @@ const Home = () => {
               <Route path="/accounts" element={<Accounts />} />
               <Route path="/proxies" element={<Proxies />} />
               <Route path="/dashboard" element={<ChartDashboard />} />
+              <Route path="/scraper" element={<Scraper />} />
               <Route path="/" element={<Dashboard />} />
             </Routes>
           </Col>
