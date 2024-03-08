@@ -15,12 +15,13 @@ const Accounts = () => {
 
   const handleAccountSubmit = (e) => {
     e.preventDefault();
-    const { email, password } = e.target.elements;
-    setAccounts([...accounts, { email: email.value, password: password.value }]);
+    const { username, email, phone, password } = e.target.elements;
+    const user = { username: username.value, email: email.value, phone: phone.value, password: password.value }
+    setAccounts([...accounts, user]);
     toggleAccountModal();
-    handlePostRequest('/users/', { username: 'deaulter', email: email.value, password: password.value});
+    handlePostRequest('/users/', user);
   };
-  
+
   const toggleAccountModal = () => setAccountModalOpen(!accountModalOpen);
 
 
@@ -31,14 +32,18 @@ const Accounts = () => {
       <Table>
         <thead>
           <tr>
+            <th>Username</th>
             <th>Email</th>
+            <th>Phone Number</th>
             <th>Password</th>
           </tr>
         </thead>
         <tbody>
           {accounts.length > 0 ? accounts.map((account, index) => (
             <tr key={index}>
+              <td>{account.username}</td>
               <td>{account.email}</td>
+              <td>{account.phone}</td>
               <td>{account.password}</td>
             </tr>
           )) : <tr><td colSpan="2">Account List will be shown here</td></tr>}
@@ -49,8 +54,16 @@ const Accounts = () => {
         <form onSubmit={handleAccountSubmit}>
           <ModalBody>
             <FormGroup>
+              <Label for="username">Username</Label>
+              <Input type="text" id="username" name="username" required />
+            </FormGroup>
+            <FormGroup>
               <Label for="email">Email</Label>
               <Input type="email" id="email" name="email" required />
+            </FormGroup>
+            <FormGroup>
+              <Label for="phone">Phone Number</Label>
+              <Input type="text" id="phone" name="phone" required />
             </FormGroup>
             <FormGroup>
               <Label for="password">Password</Label>
