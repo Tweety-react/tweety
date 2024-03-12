@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import handleRequest from "../client/axios";
-import { Row, Col, Container, Button, Table } from "reactstrap";
+import { Form, Row, Label, Input, FormGroup, Col, Container, Button, Table } from "reactstrap";
 
 const Scraper = () => {
   const [status, setStatus] = useState(false);
   const [logs, setLogs] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [proxies, setProxies] = useState([]);
 
   const getLogs = () => {
     handleRequest('/logs').then((res) => {
@@ -13,9 +15,48 @@ const Scraper = () => {
     })
   }
 
+  const startScript = (formData) => {
+    const user = formData.get('user');
+    const proxy = formData.get('proxy');
+    console.log(user, proxy);
+    handleRequest(`/start/${user}/${proxy}/`).then((res) => {
+      console.log(res.data);
+    })
+  };
+
+  const stopScript = () => {
+    handleRequest(`/stop/`).then((res) => {
+      console.log(res.data);
+    })
+  };
+
+  const submitForm = (event) => {
+    event.preventDefault()
+    if (status) {
+      stopScript();
+    } else {
+      const formData = new FormData(event.target);
+      startScript(formData);
+    }
+    setStatus(!status)
+  }
+
+  useEffect(() => {
+    handleRequest('/users').then((res) => {
+      const users = res.data;
+      setUsers(users);
+    });
+
+    handleRequest('/proxies').then((res) => {
+      const proxies = res.data;
+      setProxies(proxies);
+    });
+
+  }, [setUsers, setProxies]);
+
   useEffect(() =>{
     if (status) {
-      const intervalId = setInterval(getLogs, 500);
+      const intervalId = setInterval(getLogs, 5000);
 
       return () => clearInterval(intervalId);
     }
@@ -27,29 +68,45 @@ const Scraper = () => {
       <Row>
         <Col sm="12">
           <Container fluid className="p-2">
-
-            <Container fluid className="d-flex justify-content-between">
-              <Button
-                onClick={() => setStatus(!status)}
-                size="lg"
-                className={`rounded rounded-pill px-5 ${status ? 'bg-secondary' : 'bg-primary'}`}
-              >
-                {status ? "Stop" : "Start"} Twitter Scraper
-              </Button>
-
-              {status && <Button
-                onClick={() => getLogs()}
-                size="lg"
-                className={`rounded rounded-pill px-5 bg-primary`}
-              > Refresh
-              </Button>}
+            <Form className="col-12" onSubmit={submitForm}>
+              <Container fluid className="d-flex justify-content-between">
+                <FormGroup className="col-12 col-sm-5">
+                  <Label for="user" className="mr-sm-2">User:</Label>
+                  <Input type="select" name="user" id="user" required>
+                    <option value="">Select a user</option>
+                    {users.map((user) => (
+                        <option value={user.id}>{user.username}</option>
+                    ))}
+                  </Input>
+                </FormGroup>
+                <FormGroup className="col-12 col-sm-5">
+                  <Label for="proxy" className="mr-sm-2">Proxy:</Label>
+                  <Input type="select" name="proxy" id="proxy" required>
+                    <option value="">Select a proxy</option>
+                    {proxies.map((proxy) => (
+                        <option value={proxy.id}>{proxy.proxyHost}-{proxy.proxyPort}-{proxy.proxyUsername}</option>
+                    ))}
+                  </Input>
+                </FormGroup>
+              </Container>
+              <Container fluid className="d-flex justify-content-end">
+                {status && <Button
+                  onClick={() => getLogs()}
+                  size="sm"
+                  className={`rounded rounded-pill px-5 bg-primary`}
+                > Refresh
+                </Button>}
+                <Button
+                  type="submit"
+                  // onClick={() => setStatus(!status)}
+                  size="sm"
+                  className={`rounded rounded-pill px-5 ${status ? 'bg-secondary' : 'bg-primary'}`}
+                >
+                  {status ? "Stop" : "Start"} Twitter Scraper
+                </Button>
             </Container>
-            {status && (
-              <p className="p-2 mt-2">
-                Scraper is running ...................
-                <br></br> And you can check out logs below
-              </p>
-            )}
+            </Form>
+
           </Container>
         </Col>
         {status && (
