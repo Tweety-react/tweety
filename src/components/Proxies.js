@@ -1,5 +1,6 @@
+/* eslint-disable no-restricted-globals */
 import React, { useState,useEffect } from 'react';
-import handleRequest, { handlePostRequest } from "../client/axios";
+import handleRequest, { handlePostRequest, handleDeleteRequest } from "../client/axios";
 import { Modal, ModalBody, ModalHeader, ModalFooter, FormGroup, Label, Input, Button, Table } from 'reactstrap';
 
 const Proxies = () => {
@@ -14,6 +15,15 @@ const Proxies = () => {
       setProxies(proxies);
     });
   }, [setProxies]);
+
+  const handleProxyDelete = (id) => {
+    if(confirm('Are you sure you want to delete this proxy?')){
+      handleDeleteRequest(`/proxies/${id}`).then((res) => {
+        console.log(res.data);
+        setProxies(proxies.filter(proxy => proxy.id !== id));
+      });
+    }
+  }
 
   const handleProxySubmit = (e) => {
     e.preventDefault();
@@ -35,6 +45,7 @@ const Proxies = () => {
             <th>Proxy Port</th>
             <th>Proxy Username</th>
             <th>Proxy Password</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -44,6 +55,9 @@ const Proxies = () => {
               <td>{proxy.proxyPort}</td>
               <td>{proxy.proxyUsername}</td>
               <td>{proxy.proxyPassword}</td>
+              <td>
+              <Button color="danger" type="button" onClick={() => handleProxyDelete(proxy.id)}>Delete</Button>
+              </td>
             </tr>
           )) : <tr><td colSpan="4">Proxies List will be shown here</td></tr>}
         </tbody>

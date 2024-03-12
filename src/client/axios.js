@@ -22,4 +22,15 @@ export const handlePostRequest = (url, data) => {
   });
 };
 
+export const handleDeleteRequest = (url, data) => {
+  return axios({
+    url: `${baseUrl}${url}`,
+    method: "Delete",
+    headers: {
+      Accept: "application/json",
+    },
+    data: data,
+  });
+};
+
 export default handleRequest;

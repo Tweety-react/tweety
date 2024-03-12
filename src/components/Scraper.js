@@ -6,7 +6,6 @@ const Scraper = () => {
   const [status, setStatus] = useState(false);
   const [logs, setLogs] = useState([]);
   const [users, setUsers] = useState([]);
-  const [proxies, setProxies] = useState([]);
 
   const getLogs = () => {
     handleRequest('/logs').then((res) => {
@@ -16,9 +15,7 @@ const Scraper = () => {
   }
 
   const startScript = (formData) => {
-    const user = formData.get('user');
-    const proxy = formData.get('proxy');
-    console.log(user, proxy);
+    const [user, proxy] = formData.get('user').split('-');
     handleRequest(`/start/${user}/${proxy}/`).then((res) => {
       console.log(res.data);
     })
@@ -37,6 +34,7 @@ const Scraper = () => {
     } else {
       const formData = new FormData(event.target);
       startScript(formData);
+      getLogs();
     }
     setStatus(!status)
   }
@@ -47,12 +45,7 @@ const Scraper = () => {
       setUsers(users);
     });
 
-    handleRequest('/proxies').then((res) => {
-      const proxies = res.data;
-      setProxies(proxies);
-    });
-
-  }, [setUsers, setProxies]);
+  }, [setUsers]);
 
   useEffect(() =>{
     if (status) {
@@ -75,16 +68,7 @@ const Scraper = () => {
                   <Input type="select" name="user" id="user" required>
                     <option value="">Select a user</option>
                     {users.map((user) => (
-                        <option value={user.id}>{user.username}</option>
-                    ))}
-                  </Input>
-                </FormGroup>
-                <FormGroup className="col-12 col-sm-5">
-                  <Label for="proxy" className="mr-sm-2">Proxy:</Label>
-                  <Input type="select" name="proxy" id="proxy" required>
-                    <option value="">Select a proxy</option>
-                    {proxies.map((proxy) => (
-                        <option value={proxy.id}>{proxy.proxyHost}-{proxy.proxyPort}-{proxy.proxyUsername}</option>
+                        <option value={`${user.id}-${user.proxy}`}>{user.username}</option>
                     ))}
                   </Input>
                 </FormGroup>
